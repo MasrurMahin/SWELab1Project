@@ -10,6 +10,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     status TEXT DEFAULT 'todo',
+    priority TEXT DEFAULT 'normal',
     assignee TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
