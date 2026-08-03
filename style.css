@@ -1,0 +1,20 @@
+body {
+  font-family: sans-serif;
+  max-width: 700px;
+  margin: 2em auto;
+  background: var(--bg, #fff);
+  color: var(--fg, #000);
+}
+
+.task {
+  padding: 8px;
+  border: 1px solid #ccc;
+  margin: 4px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
