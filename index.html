@@ -2,23 +2,37 @@
 <html>
 <head>
   <title>Task Board</title>
-  <style>
-    body { font-family: sans-serif; max-width: 700px; margin: 2em auto; }
-    .task { padding: 8px; border: 1px solid #ccc; margin: 4px 0; display: flex; justify-content: space-between; }
-    .done { text-decoration: line-through; opacity: 0.6; }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Task Board</h1>
+<h1>Task Board</h1>
   <input id="title" placeholder="Task title" />
   <input id="assignee" placeholder="Assignee" />
   <button onclick="addTask()">Add</button>
+
+  <div style="margin-top: 1em;">
+    <label>Filter by assignee: </label>
+    <select id="filter" onchange="load()">
+      <option value="">All</option>
+    </select>
+  </div>
+
   <div id="list"></div>
 
-  <script>
+  <script>let allTasks = [];
     async function load() {
       const res = await fetch('/api/tasks');
-      const tasks = await res.json();
+      allTasks = await res.json();
+
+      // populate dropdown with unique assignees
+      const filter = document.getElementById('filter');
+      const current = filter.value;
+      const names = [...new Set(allTasks.map(t => t.assignee).filter(Boolean))];
+      filter.innerHTML = '<option value="">All</option>' +
+        names.map(n => `<option value="${n}">${n}</option>`).join('');
+      filter.value = current;
+
+      const tasks = current ? allTasks.filter(t => t.assignee === current) : allTasks;
       document.getElementById('list').innerHTML = tasks.map(t => `
         <div class="task ${t.status === 'done' ? 'done' : ''}">
           <span>${t.title} — ${t.assignee || 'unassigned'}</span>
