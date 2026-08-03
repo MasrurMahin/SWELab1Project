@@ -4,10 +4,21 @@
 <head>
   <title>Task Board</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: sans-serif; max-width: 700px; margin: 2em auto;
+      background: var(--bg, #fff); color: var(--fg, #000);
+    }
+    .task { padding: 8px; border: 1px solid #ccc; margin: 4px 0; display: flex; justify-content: space-between; }
+    .done { text-decoration: line-through; opacity: 0.6; }
+    body.dark { --bg: #1e1e1e; --fg: #e0e0e0; }
+    body.dark .task { border-color: #555; }
+  </style>
 </head>
 
 <body>
 <h1>Task Board</h1>
+  <button onclick="toggleDark()">🌙 Toggle dark mode</button>
   <input id="title" placeholder="Task title" />
   <input id="assignee" placeholder="Assignee" />
   <button onclick="addTask()">Add</button>
@@ -61,6 +72,9 @@
       load();
     }
     load();
+    function toggleDark() {
+      document.body.classList.toggle('dark');
+    }
   </script>
 </body>
 
