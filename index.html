@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Task Board</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: 2em auto; }
+    .task { padding: 8px; border: 1px solid #ccc; margin: 4px 0; display: flex; justify-content: space-between; }
+    .done { text-decoration: line-through; opacity: 0.6; }
+  </style>
+</head>
+<body>
+  <h1>Task Board</h1>
+  <input id="title" placeholder="Task title" />
+  <input id="assignee" placeholder="Assignee" />
+  <button onclick="addTask()">Add</button>
+  <div id="list"></div>
+
+  <script>
+    async function load() {
+      const res = await fetch('/api/tasks');
+      const tasks = await res.json();
+      document.getElementById('list').innerHTML = tasks.map(t => `
+        <div class="task ${t.status === 'done' ? 'done' : ''}">
+          <span>${t.title} — ${t.assignee || 'unassigned'}</span>
+          <span>
+            <button onclick="toggle(${t.id}, '${t.status}')">${t.status === 'done' ? '↺' : '✓'}</button>
+            <button onclick="del(${t.id})">🗑</button>
+          </span>
+        </div>
+      `).join('');
+    }
+    async function addTask() {
+      const title = document.getElementById('title').value;
+      const assignee = document.getElementById('assignee').value;
+      if (!title) return;
+      await fetch('/api/tasks', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ title, assignee }) });
+      load();
+    }
+    async function toggle(id, status) {
+      await fetch('/api/tasks/' + id, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ status: status === 'done' ? 'todo' : 'done' }) });
+      load();
+    }
+    async function del(id) {
+      await fetch('/api/tasks/' + id, { method: 'DELETE' });
+      load();
+    }
+    load();
+  </script>
+</body>
+</html>
